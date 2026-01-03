@@ -8,11 +8,10 @@ ARCH="arm64"
 DEFCONFIG="clover_defconfig"
 
 # Set toolchain paths
-CROSS_TOOLCHAIN="/opt/linux-x86/clang-r522817/bin"
-CROSS_COMPILE_ARM32_PATH="/opt/arm-eabi-4.8/bin"
+CROSS_TOOLCHAIN="/opt/proton-clang/bin"
 
 # Add toolchains to PATH
-export PATH="$CROSS_TOOLCHAIN:$CROSS_COMPILE_ARM32_PATH:$PATH"
+export PATH="$CROSS_TOOLCHAIN:$PATH"
 
 # Output folder
 OUTPUT="out"
@@ -46,7 +45,6 @@ if [ ! -d "$OUTPUT" ] || [ ! "$OUTPUT/.config" ]; then
 		CC=clang \
 		CLANG_TRIPLE=aarch64-linux-gnu- \
 		CROSS_COMPILE=aarch64-linux-gnu- \
-		CROSS_COMPILE_ARM32=arm-eabi- \
 		"$DEFCONFIG"
 fi
 
@@ -60,7 +58,6 @@ if [ "${1-}" == "--menu" ]; then
 	                CC=clang \
 	                CLANG_TRIPLE=aarch64-linux-gnu- \
 	                CROSS_COMPILE=aarch64-linux-gnu- \
-	                CROSS_COMPILE_ARM32=arm-eabi- \
 	                "$DEFCONFIG"
 	fi
 
@@ -70,19 +67,17 @@ if [ "${1-}" == "--menu" ]; then
 	        CC=clang \
 	        CLANG_TRIPLE=aarch64-linux-gnu- \
 	        CROSS_COMPILE=aarch64-linux-gnu- \
-	        CROSS_COMPILE_ARM32=arm-eabi- \
 	        menuconfig
 	exit 0
 fi
 
 # Build kernel
 echo "Building the kernel"
-make -j"$CORES" \
+make V=1 -j"$CORES" \
 	O="$OUTPUT" \
 	ARCH="$ARCH" \
 	CC=clang \
 	CLANG_TRIPLE=aarch64-linux-gnu- \
 	CROSS_COMPILE=aarch64-linux-gnu- \
-	CROSS_COMPILE_ARM32=arm-eabi- \
 	LLVM=1 \
 	LLVM_IAS=1
